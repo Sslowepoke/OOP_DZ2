@@ -14,20 +14,23 @@ private:
     class Node {
     public:
 
-        Node() : contact(), children(256), is_terminal(false) {}
-        Node(Contact* contact) : contact(contact), children(256), is_terminal(true) {}
+        Node() : contact(), children(alphabet_size), is_terminal(false) {}
+        Node(Contact* contact) : contact(contact), children(alphabet_size), is_terminal(true) {}
 
         //checks if the node has any children
-        bool hasChildren();
+        bool hasChildren() const;
+
 
         Contact* contact;
         std::vector<Node*> children;
         bool is_terminal;
 
+
     };
 
 public:
     Trie() : root(new Node()) {}
+    ~Trie();
 
     //inserts a node with given name and contact
     void insert(const std::string& name, Contact* contact);
@@ -43,6 +46,11 @@ public:
     std::stack<Node*> getPath(Node* node);
     //traverses the tree
 
+    //checks if trie is empty
+    bool isEmpty();
+    //empties tree
+    void empty();
+
     //node ---
     //prints a node
     friend std::ostream& operator<<(std::ostream& os, const Node& node);
@@ -56,4 +64,11 @@ private:
     Node* getNode(const std::string& name);
     //returns a pointer to terminal node with given name if it exists, or nullptr if it doesn't
     Node* search (const std::string& name);
+    //deletes a subtrie with given pointer as root
+    void deleteSubtrie(Node* root);
+    //translates ascii char to its counterpart index in vector children
+    char charToIndex(char c) const;
+
+    static constexpr int alphabet_size = 53;
+
 };

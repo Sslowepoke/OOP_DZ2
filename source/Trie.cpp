@@ -4,7 +4,7 @@
 void Trie::insert (const std::string& name, Contact* contact) {
     Node* curr = root;
     for(auto& ch : name) {
-        if(Node* tmp = curr->children[ch]) {
+        if(Node* tmp = curr->children[charToIndex(ch)]) {
             curr = tmp;
         }
         else {
@@ -20,13 +20,14 @@ void Trie::insert (const std::string& name, Contact* contact) {
 void Trie::insertContact(Contact* contact) {
     Node* curr = root;
     for(auto& ch : contact->getName()) {
-        if(curr->children[ch]) {
-            curr = curr->children[ch];
+        char index = charToIndex(ch);
+        if(curr->children[index]) {
+            curr = curr->children[index];
         }
         else {
             //makes a new node
-            curr->children[ch] = new Node();
-            curr = curr->children[ch];
+            curr->children[index] = new Node();
+            curr = curr->children[index];
         }
     }
     curr->is_terminal = true;
@@ -36,8 +37,9 @@ void Trie::insertContact(Contact* contact) {
 Trie::Node* Trie::getNode (const std::string& name) {
     Node* current = root;
     for(auto& ch : name) {    
-        if(current->children[ch] == nullptr) return nullptr; 
-        current = current->children[ch];
+        char index = charToIndex(ch);
+        if(current->children[index] == nullptr) return nullptr; 
+        current = current->children[index];
     }
     return current;
 }   
@@ -80,10 +82,36 @@ std::stack<Trie::Node*> Trie::getPath(Node* node) {
     std::stack<Node*> stack;
     for(char& ch : node->contact->getName()) {
         // if(current->children[ch] == nullptr) //error
-        current = current->children[ch];
+        current = current->children[charToIndex(ch)];
         stack.push(current);
     }
     return stack;
+}
+
+Trie::~Trie() {
+    deleteSubtrie(root);
+}
+
+void Trie::deleteSubtrie(Node* root) {
+    if(!root->hasChildren()) {
+        delete(root);
+        return;
+    }
+    for(char c = 0; c < alphabet_size; c++) {
+        if(root->children[c]) 
+            deleteSubtrie(root->children[c]);
+    }
+}
+
+bool Trie::isEmpty() {
+    return !root->hasChildren();
+}
+
+void Trie::empty() {
+    for(char c = 0; c < alphabet_size; c++) {
+        if(root->children[c])
+            deleteSubtrie(root->children[c]);
+    }
 }
 
 //node----------------------------------------------------------------------------------
@@ -96,16 +124,23 @@ std::ostream& operator<<(std::ostream& os, const Trie::Node& node){
 std::ostream& operator<<(std::ostream& os, Trie::Node* start) {
     if(start == nullptr) return os;
     if(start->is_terminal) os << (*start);
-    for(char c = 0; c < 256; c++) {
+    for(char c = 0; c < Trie::alphabet_size; c++) {
         if(start->children[c]!=nullptr) os << start->children[c];
     }
 }
 
-bool Trie::Node::hasChildren() {
+bool Trie::Node::hasChildren() const{
     for(Node* ptr : children) {
         if(ptr != nullptr) return true;
     }
     return false;
 }
 
-
+char Trie::charToIndex(char c) const{
+    if(c >= 'a' && c <= 'z')
+        return c - 'a';
+    if (c >= 'A' && c <= 'Z')
+        return c - 'A';
+    if (c == ' ')
+        return 52;
+}
