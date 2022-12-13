@@ -5,7 +5,7 @@
 
 class Number {
 public:
-    
+    Number(const std::string& string_number);
     friend std::ostream& operator<<(std::ostream& os, const Number& number);
 
 private:

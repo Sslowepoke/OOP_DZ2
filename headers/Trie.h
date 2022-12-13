@@ -9,14 +9,13 @@
 #include "Contact.h"
 
 class Trie {
+//node-------------------------------------------------------------------------------
 private:
-        //node-------------------------------------------------------------------------------
     class Node {
     public:
 
         Node() : contact(), children(256), is_terminal(false) {}
         Node(Contact* contact) : contact(contact), children(256), is_terminal(true) {}
-        
 
         //checks if the node has any children
         bool hasChildren();
@@ -45,7 +44,7 @@ public:
     //traverses the tree
 
     //node ---
-            //prints a node
+    //prints a node
     friend std::ostream& operator<<(std::ostream& os, const Node& node);
     //prints all terminal nodes of a sub trie
     friend std::ostream& operator<<(std::ostream& os, Node* start);
