@@ -33,7 +33,7 @@ void Trie::insertContact(Contact* contact) {
     curr->contact = contact;
 }
 
-Node* Trie::getNode (const std::string& name) {
+Trie::Node* Trie::getNode (const std::string& name) {
     Node* current = root;
     for(auto& ch : name) {    
         if(current->children[ch] == nullptr) return nullptr; 
@@ -42,7 +42,7 @@ Node* Trie::getNode (const std::string& name) {
     return current;
 }   
 
-Node* Trie::search (const std::string& name) {
+Trie::Node* Trie::search (const std::string& name) {
     Node* tmp = getNode(name);
     if(tmp != nullptr && tmp->is_terminal) return tmp;
     else return nullptr;
@@ -75,7 +75,7 @@ void Trie::deleteNode(Node* to_delete) {
     }
 }
 
-std::stack<Node*> Trie::getPath(Node* node) {
+std::stack<Trie::Node*> Trie::getPath(Node* node) {
     Node* current = root;
     std::stack<Node*> stack;
     for(char& ch : node->contact->getName()) {
@@ -84,6 +84,28 @@ std::stack<Node*> Trie::getPath(Node* node) {
         stack.push(current);
     }
     return stack;
+}
+
+//node----------------------------------------------------------------------------------
+
+std::ostream& operator<<(std::ostream& os, const Trie::Node& node){
+    os << (*node.contact);
+    return os;
+}
+
+std::ostream& operator<<(std::ostream& os, Trie::Node* start) {
+    if(start == nullptr) return os;
+    if(start->is_terminal) os << (*start);
+    for(char c = 0; c < 256; c++) {
+        if(start->children[c]!=nullptr) os << start->children[c];
+    }
+}
+
+bool Trie::Node::hasChildren() {
+    for(Node* ptr : children) {
+        if(ptr != nullptr) return true;
+    }
+    return false;
 }
 
 
