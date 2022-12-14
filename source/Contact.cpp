@@ -5,7 +5,7 @@ std::ostream& operator<<(std::ostream& os, const Contact& contact) {
 }
 
 std::string Contact::getName() {
-    return name;
+    return this->name;
 }
 
 void Contact::changeNumber(std::string& new_number) {
@@ -14,5 +14,5 @@ void Contact::changeNumber(std::string& new_number) {
 
 void Contact::changeName(std::string& new_name) {
     name = new_name;
-    std::cout << "- Name changed to " << name;
+    std::cout << "- Name changed to " << name << std::endl;
 }

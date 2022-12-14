@@ -10,7 +10,7 @@ class Contact {
 public:
     Contact(const std::string& name, const std::string& number) : name(name), number(number) {}
     
-    friend std::ostream& operator<<(std::ostream& os, const Contact& contact);\
+    friend std::ostream& operator<<(std::ostream& os, const Contact& contact);
     std::string getName();
     void changeNumber(std::string& new_number);
     void changeName(std::string& new_name);

@@ -22,13 +22,17 @@ private:
     //empties phonebook (deletes all data)
     void empty();
     //makes a new contact and adds it to the trie
-    Contact* addContact(std::string&name, const std::string& number);
+    void addContact(std::string&name, const std::string& number);
+    //and prints out new contact added
+    void addContactPrint(std::string& name, const std::string& nubmer);
     //prints a welcome message
     void welcomeMessage();
     //changes selected contact's number
     void changeSelectedNumber();
     //changes selected contact's name
     void changeSelectedName();
+    //clears cin buffer
+    void flushCin();
 
     //commmands
     void terminalNew();
@@ -36,5 +40,6 @@ private:
     void terminalSelect();
     void terminalDelete();
     void terminalEdit();
+    void terminalHelp();
     
 };

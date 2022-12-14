@@ -14,5 +14,5 @@ Number::Number(const std::string& string_number) {
 void Number::changeNumber(std::string& string_number) {
     std::stringstream ss(string_number);
     ss >> prefix >> call_number >> number;
-    std::cout << "- Number changed to " << (*this);
+    std::cout << "- Number changed to " << (*this) << std::endl;
 }

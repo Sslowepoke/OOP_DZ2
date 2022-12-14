@@ -17,7 +17,7 @@ void Trie::insert (const std::string& name, Contact* contact) {
     curr->contact = contact;
 }
 
-Contact* Trie::insertContact(Contact* contact) {
+Trie::Node* Trie::insertContact(Contact* contact) {
     Node* curr = root;
     for(auto& ch : contact->getName()) {
         char index = charToIndex(ch);
@@ -32,7 +32,7 @@ Contact* Trie::insertContact(Contact* contact) {
     }
     curr->is_terminal = true;
     curr->contact = contact;
-    return contact;
+    return curr;
 }
 
 Trie::Node* Trie::getNode (const std::string& name) {
@@ -61,9 +61,12 @@ std::ostream& operator<<(std::ostream& os, Trie tree) {
 
 void Trie::deleteNode(Node* to_delete) {
     if(!to_delete->is_terminal) return; //cant delete a non-terminal node
-    to_delete->is_terminal = false;
-    delete(to_delete->contact);
-    if(to_delete->hasChildren()) return;
+    if(to_delete->hasChildren()) {
+        to_delete->is_terminal = false;
+        delete(to_delete->contact);
+        to_delete->contact = nullptr;
+        return;
+    }
     std::stack<Node*> stack = getPath(to_delete);
     Node* current;
     Node* previous;
@@ -77,6 +80,9 @@ void Trie::deleteNode(Node* to_delete) {
          //sets the pointer to deleted node to null
         previous->children[to_delete->contact->getName()[depth]] = nullptr;
     }
+    to_delete->is_terminal = false;
+    delete(to_delete->contact);
+    to_delete->contact = nullptr;
 }
 
 std::stack<Trie::Node*> Trie::getPath(Node* node) {
@@ -122,28 +128,34 @@ std::ostream& Trie::printPrefix(std::ostream& os, std::string& prefix) {
 
 void Trie::selectNode(std::string& name) {
     selected_node = search(name);
-    std::cout << "- Contact " << selected_node->contact << "is now selected." << std::endl;
+    std::cout << "- Contact " << (*selected_node->contact) << "is now selected." << std::endl;
 }
 
 void Trie::deleteSelected() {
     if(selected_node) deleteNode(selected_node);
 }
 
-void Trie::changeSelectedNumber(std::string& number) {
-    selected_node->contact->changeNumber(number);
+void Trie::changeSelectedNumber( std::string& number) {
+    if(selected_node) selected_node->contact->changeNumber(number);
+    else std::cout << "no node selected" << std::endl;
 }
 
 void Trie::changeSelectedName(std::string& name) {
-    Contact* contact = selected_node->contact;
+    Contact* contact = new Contact(*selected_node->contact);
     contact->changeName(name);
-    insertContact(contact);
+    Node* inserted_node = insertContact(contact);
     deleteNode(selected_node);
+    selected_node = inserted_node;
+}
+
+void Trie::printSelected() {
+    std::cout << (*selected_node);
 }
 
 //node----------------------------------------------------------------------------------
 
 std::ostream& operator<<(std::ostream& os, const Trie::Node& node){
-    os << (*node.contact);
+    os << (*node.contact) << std::endl;
     return os;
 }
 

@@ -7,7 +7,7 @@
 
 #include "Number.h"
 #include "Contact.h"
-
+class Contact;
 class Trie {
 //node-------------------------------------------------------------------------------
 private:
@@ -34,7 +34,7 @@ public:
     //inserts a node with given name and contact
     void insert(const std::string& name, Contact* contact);
     //inserts a node with given contact and returns a pointer to it
-    Contact* insertContact(Contact* contact);
+    Node* insertContact(Contact* contact);
     //prints to ostream all terminal nodes that are descendants of given node (will print all nodes if root is given)
     void printFrom(Node* start, std::ostream os);
     //prints the whole tree
@@ -59,6 +59,8 @@ public:
     void changeSelectedNumber(std::string& number);
     //changes name of selected node
     void changeSelectedName(std::string& name);
+    //prints selected node
+    void printSelected();
 
     //node ---
     //prints a node

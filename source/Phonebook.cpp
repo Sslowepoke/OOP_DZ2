@@ -32,8 +32,12 @@ void Phonebook::loadPhonebook(const string& filepath) {
     }
 }
 
-Contact* Phonebook::addContact(std::string&name, const std::string& number) {
-    return tree.insertContact(new Contact(name, number));
+void Phonebook::addContact(std::string&name, const std::string& number) {
+    tree.insertContact(new Contact(name, number));
+}
+
+void Phonebook::addContactPrint(std::string& name, const std::string& number) {
+    std::cout << (*tree.insertContact(new Contact(name, number)));
 }
 
 void Phonebook::empty() {
@@ -51,6 +55,9 @@ void Phonebook::openTerminal() {
         if(command == "SEARCH") terminalSearch();
         if(command == "SELECT") terminalSelect();
         if(command == "DELETE") terminalDelete();
+        if(command == "EDIT") terminalEdit();
+        if(command == "EXIT") break;
+        if(command == "HELP") terminalHelp();
 
     }
 }
@@ -64,25 +71,28 @@ void Phonebook::welcomeMessage() {
 void Phonebook::terminalNew() {
     std::cout << "- Enter the contact name: ";
     string name;
-    std::cin >> name;
+    flushCin();
+    std::getline(std::cin, name);
     std::cout << "- Enter the contact number: ";
     string number;
-    std::cin >> number;
-    Contact* added_contact = addContact(name, number);
-    std::cout << "- Contact " << added_contact << "has been added" << std::endl;
+    flushCin();
+    std::getline(std::cin, name);    
+    addContactPrint(name, number);
 }
 
 void Phonebook::terminalSearch() {
     std::cout << "- Enter the contact name or first few letters: ";
     std::string prefix;
-    std::cin >> prefix;
+    flushCin();
+    std::getline(std::cin, prefix);
     tree.printPrefix(std::cout, prefix);
 }
 
 void Phonebook::terminalSelect() {
     std::cout << "- Enter the contact name: ";
     std::string name;
-    std::cin >> name;
+    flushCin();
+    std::getline(std::cin, name);
     tree.selectNode(name);
 }
 
@@ -93,6 +103,7 @@ void Phonebook::terminalDelete() {
 void Phonebook::terminalEdit() {
     std::cout << "- Enter 1 to change name, 2 to change number and 3 to change both ";
     int choice;
+    flushCin();
     std::cin >> choice;
     switch(choice){
     case 1:
@@ -113,14 +124,32 @@ void Phonebook::terminalEdit() {
 void Phonebook::changeSelectedName() {
     std::cout << "- Enter the new name ";
     string name;
-    std::cin >> name;
+    flushCin();
+    std::getline(std::cin, name);
     tree.changeSelectedName(name);
 }
 
 void Phonebook::changeSelectedNumber() {
     std::cout << "- Enter the new number ";
     string number;
-    std::cin >> number;
+    std::getline(std::cin, number);
+    if(number == "") std::getline(std::cin, number);
     tree.changeSelectedNumber(number);
 }
 
+void Phonebook::terminalHelp() {
+    std::cout << "List of commands: " << std::endl
+        << "- NEW - adds a new contact" << std::endl
+        << "- SEARCH - shows all contacts beginning with given prefix" << std::endl
+        << "- SELECT - selects the contact with given name" << std::endl
+        << "- DELETE - deletes the selected contact" << std::endl
+        << "- EDIT - edits the selected contact" << std::endl
+        << "- CALL - calls the selected contact" << std::endl
+        << "- CALL_HISTORY - shows call history" <<std::endl
+        << "- EXIT - quits program" << std::endl;
+}
+
+void Phonebook::flushCin() {
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
