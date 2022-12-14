@@ -17,7 +17,7 @@ void Trie::insert (const std::string& name, Contact* contact) {
     curr->contact = contact;
 }
 
-void Trie::insertContact(Contact* contact) {
+Contact* Trie::insertContact(Contact* contact) {
     Node* curr = root;
     for(auto& ch : contact->getName()) {
         char index = charToIndex(ch);
@@ -32,6 +32,7 @@ void Trie::insertContact(Contact* contact) {
     }
     curr->is_terminal = true;
     curr->contact = contact;
+    return contact;
 }
 
 Trie::Node* Trie::getNode (const std::string& name) {
@@ -61,6 +62,7 @@ std::ostream& operator<<(std::ostream& os, Trie tree) {
 void Trie::deleteNode(Node* to_delete) {
     if(!to_delete->is_terminal) return; //cant delete a non-terminal node
     to_delete->is_terminal = false;
+    delete(to_delete->contact);
     if(to_delete->hasChildren()) return;
     std::stack<Node*> stack = getPath(to_delete);
     Node* current;
@@ -114,6 +116,30 @@ void Trie::empty() {
     }
 }
 
+std::ostream& Trie::printPrefix(std::ostream& os, std::string& prefix) {
+    return os << getNode(prefix);
+}
+
+void Trie::selectNode(std::string& name) {
+    selected_node = search(name);
+    std::cout << "- Contact " << selected_node->contact << "is now selected." << std::endl;
+}
+
+void Trie::deleteSelected() {
+    if(selected_node) deleteNode(selected_node);
+}
+
+void Trie::changeSelectedNumber(std::string& number) {
+    selected_node->contact->changeNumber(number);
+}
+
+void Trie::changeSelectedName(std::string& name) {
+    Contact* contact = selected_node->contact;
+    contact->changeName(name);
+    insertContact(contact);
+    deleteNode(selected_node);
+}
+
 //node----------------------------------------------------------------------------------
 
 std::ostream& operator<<(std::ostream& os, const Trie::Node& node){
@@ -127,6 +153,7 @@ std::ostream& operator<<(std::ostream& os, Trie::Node* start) {
     for(char c = 0; c < Trie::alphabet_size; c++) {
         if(start->children[c]!=nullptr) os << start->children[c];
     }
+    return os;
 }
 
 bool Trie::Node::hasChildren() const{
@@ -143,4 +170,5 @@ char Trie::charToIndex(char c) const{
         return c - 'A';
     if (c == ' ')
         return 52;
+    // throw exception(); should make
 }

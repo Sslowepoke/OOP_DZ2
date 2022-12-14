@@ -11,7 +11,9 @@
                 "${workspaceFolder}/source/*.cpp",
                 "-I",
                 "${workspaceFolder}/headers",
-                "${workspaceFolder}/program"
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}",
+                "-std=c++11"
             ],
             "options": {
                 "cwd": "${fileDirname}"

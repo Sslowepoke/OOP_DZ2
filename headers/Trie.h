@@ -16,6 +16,7 @@ private:
 
         Node() : contact(), children(alphabet_size), is_terminal(false) {}
         Node(Contact* contact) : contact(contact), children(alphabet_size), is_terminal(true) {}
+        ~Node() { if(contact) delete(contact); }
 
         //checks if the node has any children
         bool hasChildren() const;
@@ -24,18 +25,16 @@ private:
         Contact* contact;
         std::vector<Node*> children;
         bool is_terminal;
-
-
     };
 
 public:
-    Trie() : root(new Node()) {}
+    Trie() : root(new Node()), selected_node(nullptr) {}
     ~Trie();
 
     //inserts a node with given name and contact
     void insert(const std::string& name, Contact* contact);
-    //inserts a node with given contact
-    void insertContact(Contact* contact);
+    //inserts a node with given contact and returns a pointer to it
+    Contact* insertContact(Contact* contact);
     //prints to ostream all terminal nodes that are descendants of given node (will print all nodes if root is given)
     void printFrom(Node* start, std::ostream os);
     //prints the whole tree
@@ -50,6 +49,16 @@ public:
     bool isEmpty();
     //empties tree
     void empty();
+    //prints all terminal nodes with names that begin with given prefix
+    std::ostream& printPrefix(std::ostream& os, std::string& prefix);
+    //sets selected node to a terminal node with given name
+    void selectNode(std::string& name);
+    //if there is a selected node, deletes it
+    void deleteSelected();
+    //changes number of selected node
+    void changeSelectedNumber(std::string& number);
+    //changes name of selected node
+    void changeSelectedName(std::string& name);
 
     //node ---
     //prints a node
@@ -60,6 +69,7 @@ public:
 
 private:
     Node* root;
+    Node* selected_node;
     //returns a pointer to node with given name if it exists
     Node* getNode(const std::string& name);
     //returns a pointer to terminal node with given name if it exists, or nullptr if it doesn't
@@ -70,5 +80,6 @@ private:
     char charToIndex(char c) const;
 
     static constexpr int alphabet_size = 53;
+
 
 };
