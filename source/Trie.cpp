@@ -36,6 +36,7 @@ Trie::Node* Trie::insertContact(Contact* contact) {
     if(curr->is_terminal) throw contact_already_exists();
     curr->is_terminal = true;
     curr->contact = contact;
+    terminals.push_back(curr);
     return curr;
 }
 
@@ -102,7 +103,10 @@ std::stack<Trie::Node*> Trie::getPath(Node* node) {
 }
 
 Trie::~Trie() {
-    deleteSubtrie(root);
+    // deleteSubtrie(root);
+    for(auto node : terminals) {
+        deleteNode(node);
+    }
 }
 
 // recursive

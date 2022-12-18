@@ -5,6 +5,7 @@
 #include <stack>
 #include <iostream>
 #include <list>
+using std::vector;
 
 #include "Contact.h"
 #include "PhonebookException.h"
@@ -82,6 +83,7 @@ public:
 private:
     Node* root;
     Node* selected_node;
+    vector<Node*> terminals;
     //returns a pointer to node with given name if it exists
     Node* getNode(const std::string& name);
     //returns a pointer to terminal node with given name if it exists, or nullptr if it doesn't
