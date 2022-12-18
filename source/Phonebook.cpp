@@ -32,8 +32,8 @@ void Phonebook::loadPhonebook(const string& filepath) {
                     std::string number = line.substr(index+1, index2-index-1);
                     addContact(name, number);
                 }
-                catch (contact_already_exists& e) {
-
+                catch (std::exception& e) {
+                    std::cout << e.what() << std::endl;
                 }
             }
         }
