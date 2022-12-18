@@ -19,6 +19,4 @@ public:
 private:
     Number* number;
     std::string name;
-
-    Number* makeNumber(const std::string& number_string);
 };

@@ -5,6 +5,7 @@
 #include <stack>
 #include <iostream>
 #include <list>
+using std::vector;
 
 #include "Contact.h"
 #include "PhonebookException.h"
@@ -82,6 +83,7 @@ public:
 private:
     Node* root;
     Node* selected_node;
+    vector<Node*> terminals;
     //returns a pointer to node with given name if it exists
     Node* getNode(const std::string& name);
     //returns a pointer to terminal node with given name if it exists, or nullptr if it doesn't
@@ -91,6 +93,7 @@ private:
     //translates ascii char to its counterpart index in vector children
     char charToIndex(char c) const;
 
-    static constexpr int alphabet_size = 30;
+    static constexpr int alphabet_size = 90;
+    static std::string lookup;
 
 };
