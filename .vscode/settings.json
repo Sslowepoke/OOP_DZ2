@@ -65,6 +65,9 @@
         "fstream": "cpp",
         "iomanip": "cpp",
         "stack": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "version": "cpp",
+        "list": "cpp",
+        "queue": "cpp"
     }
 }

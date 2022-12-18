@@ -1,1 +1,8 @@
-/source/*.o
+*.o
+/headers/*/
+/source/*/
+/tst_big.o.dSYM
+tst_big.csv
+/.vscode/*/
+*.dSYM
+.DS_Store

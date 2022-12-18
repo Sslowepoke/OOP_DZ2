@@ -4,10 +4,9 @@
 
 int main() {   
         Phonebook& p = Phonebook::getInstance();
-        std::cout << "radi";
-        p.loadPhonebook("tst.csv");
 
+        p.loadPhonebook("tst.csv");
+        p.openTerminal();
 
     return 0;
-
 }
