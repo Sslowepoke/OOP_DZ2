@@ -250,20 +250,31 @@ bool Trie::Node::hasChildren() const{
     return false;
 }
 
-char Trie::charToIndex(char c) const{
-    if(c >= 'a' && c <= 'z')
-        return c - 'a';
-    else if(c >= 'A' && c <= 'Z')
-        return c - 'A';
-    else if(c == ' ')
-        return 26;
-    else if(c == '-')
-        return 27;
-    else if(c == '.')
-        return 28;
+std::string Trie::lookup = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789-.'/,:&!#;_$`@[]()?+%*{}><";
+
+// char Trie::charToIndex(char c) const{
+//     if(c >= 'a' && c <= 'z')
+//         return c - 'a';
+//     else if(c >= 'A' && c <= 'Z')
+//         return c - 'A';
+//     else if(c == ' ')
+//         return 26;
+//     else if(c == '-')
+//         return 27;
+//     else if(c == '.')
+//         return 28;
+//     else 
+//         return 29;// sve ostale nepodrzane karaktere tretiram kao jedan (i guess dovoljno dobro)
+// }
+
+char Trie::charToIndex(char c) const {
+    char a = lookup.find(c);
+    if(a == std::string::npos)
+        return 90;
     else 
-        return 29;// sve ostale nepodrzane karaktere tretiram kao jedan (i guess dovoljno dobro)
+        return a;
 }
+
 Trie::Node::~Node() {
     if(contact) delete contact;
     contact = nullptr;

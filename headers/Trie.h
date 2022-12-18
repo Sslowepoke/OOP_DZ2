@@ -93,6 +93,7 @@ private:
     //translates ascii char to its counterpart index in vector children
     char charToIndex(char c) const;
 
-    static constexpr int alphabet_size = 30;
+    static constexpr int alphabet_size = 90;
+    static std::string lookup;
 
 };
