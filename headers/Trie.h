@@ -4,19 +4,19 @@
 #include <string>
 #include <stack>
 #include <iostream>
+#include <list>
 
-#include "Number.h"
 #include "Contact.h"
-class Contact;
+#include "PhonebookException.h"
 class Trie {
 //node-------------------------------------------------------------------------------
 private:
     class Node {
     public:
 
-        Node() : contact(), children(alphabet_size), is_terminal(false) {}
+        Node() : contact(nullptr), children(alphabet_size), is_terminal(false) {}
         Node(Contact* contact) : contact(contact), children(alphabet_size), is_terminal(true) {}
-        ~Node() { if(contact) delete(contact); }
+        ~Node();
 
         //checks if the node has any children
         bool hasChildren() const;
@@ -61,6 +61,16 @@ public:
     void changeSelectedName(std::string& name);
     //prints selected node
     void printSelected();
+    //returns a contact pointer to contact with given name
+    Contact* getContact(const std::string& name);
+    //returns the selected contact
+    Contact* getSelectedContact();
+    //returns a list of pointers to contacts whose names start with given string
+    std::list<Contact*> startsWith(const std::string& prefix);
+    //returns a list of children terminal nodes in order
+    std::list<Contact*> terminalChildren(Node* root);
+    // //traverses the tree in order
+    // void inOrder(Node* root);
 
     //node ---
     //prints a node
@@ -75,13 +85,12 @@ private:
     //returns a pointer to node with given name if it exists
     Node* getNode(const std::string& name);
     //returns a pointer to terminal node with given name if it exists, or nullptr if it doesn't
-    Node* search (const std::string& name);
+    Node* search(const std::string& name);
     //deletes a subtrie with given pointer as root
     void deleteSubtrie(Node* root);
     //translates ascii char to its counterpart index in vector children
     char charToIndex(char c) const;
 
-    static constexpr int alphabet_size = 53;
-
+    static constexpr int alphabet_size = 30;
 
 };
