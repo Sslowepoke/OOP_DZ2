@@ -9,9 +9,7 @@ using std::stringstream;
 #include <list>
 
 
-Phonebook::Phonebook() : tree(), call_history() {
-
-}
+Phonebook::Phonebook() : tree(), call_history() {}
 
 Phonebook& Phonebook::getInstance(){
     static Phonebook instance;
@@ -47,15 +45,9 @@ void Phonebook::addContact(std::string&name, const std::string& number) {
     tree.insertContact(new Contact(name, number));
 }
 
-void Phonebook::addContactPrint(std::string& name, const std::string& number) {
-    stringstream ss;
-    ss << "- Added contact: " << std::endl << (*tree.insertContact(new Contact(name, number)));
-    std::cout << ss.str();
-}
-
 void Phonebook::empty() {
-    if(!tree.isEmpty()){
-        tree.empty();
+    if(!tree.empty()){
+        tree.clear();
     } 
 }
 
@@ -65,15 +57,15 @@ void Phonebook::openTerminal() {
             string command;
             std::cout << "Enter the command: ";
             getline(std::cin, command, '\n');
-            if(command == "NEW") terminalNew();
-            if(command == "SEARCH") terminalSearch();
-            if(command == "SELECT") terminalSelect();
-            if(command == "DELETE") terminalDelete();
-            if(command == "EDIT") terminalEdit();
-            if(command == "EXIT") break;
-            if(command == "HELP") terminalHelp();
-            if(command == "CALL HISTORY") terminalCallHistory();
-            if(command == "CALL") terminalCall();
+            if(command == "NEW" || command == "new") terminalNew();
+            if(command == "SEARCH" || command == "search") terminalSearch();
+            if(command == "SELECT" || command == "select") terminalSelect();
+            if(command == "DELETE" || command == "delete") terminalDelete();
+            if(command == "EDIT" || command == "edit") terminalEdit();
+            if(command == "EXIT" || command == "exit") break;
+            if(command == "HELP" || command == "help") terminalHelp();
+            if(command == "CALL HISTORY" || command == "call history") terminalCallHistory();
+            if(command == "CALL" || command == "call") terminalCall();
         }
         catch (std::exception& e) {
             std::cout << "- " << e.what() << std::endl;
@@ -96,18 +88,10 @@ void Phonebook::terminalNew() {
     string number;
     // flushCin();
     std::getline(std::cin, number, '\n');    
-    addContactPrint(name, number);
+    addContact(name, number);
+    std::cout << "- Added contact: " << name << " " << number << std::endl;
 }
 
-// void Phonebook::terminalSearch() {
-//     std::cout << "- Enter the contact name or first few letters: ";
-//     std::string prefix;
-//     // flushCin();
-//     std::getline(std::cin, prefix, '\n');
-//     tree.printPrefix(std::cout, prefix);
-// }
-
-// also prints number of contacts found
 void Phonebook::terminalSearch() {
     std::cout << "- Enter the contact name or first few letters: ";
     std::string prefix;
@@ -124,18 +108,23 @@ void Phonebook::terminalSelect() {
     std::string name;
     // flushCin();
     std::getline(std::cin, name, '\n');
-    tree.selectNode(name);
+    selected_contact = tree.getContact(name);
 }
 
 void Phonebook::terminalDelete() {
-    tree.deleteSelected();
+    if(!selected_contact) throw no_contact_selected();
+    tree.deleteContact(selected_contact);
+    selected_contact = nullptr;
 }
 
 void Phonebook::terminalEdit() {
+    if(!selected_contact) throw no_contact_selected();
     std::cout << "- Enter 1 to change name, 2 to change number and 3 to change both ";
     int choice;
     std::cin >> choice;
-    flushCin();
+    //maybe not needed
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     switch(choice){
     case 1:
         changeSelectedName(); break;
@@ -157,14 +146,14 @@ void Phonebook::changeSelectedName() {
     string name;
     // flushCin();
     std::getline(std::cin, name, '\n');
-    tree.changeSelectedName(name);
+    selected_contact = tree.changeContactName(selected_contact, name);
 }
 
 void Phonebook::changeSelectedNumber() {
     std::cout << "- Enter the new number ";
     string number;
     std::getline(std::cin, number, '\n');
-    tree.changeSelectedNumber(number);
+    selected_contact->changeNumber(number);
 }
 
 void Phonebook::terminalHelp() {
@@ -179,22 +168,9 @@ void Phonebook::terminalHelp() {
         << "- EXIT - quits program" << std::endl;
 }
 
-void Phonebook::flushCin() {
-    std::cin.clear();
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-}
-//CALLS CONTACT WITH GIVEN NAME
-// void Phonebook::terminalCall() {
-//     std::cout << "- Enter the contact name: ";
-//     std::string name;
-//     flushCin();
-//     std::getline(std::cin, name);
-//     Contact* contact = tree.getContact(name);
-//     call_history.call(contact);
-// }
-
 void Phonebook::terminalCall() {
-    call_history.call(tree.getSelectedContact());
+    if(!selected_contact) throw no_contact_selected();
+    call_history.call(selected_contact);
 }
 
 void Phonebook::terminalCallHistory() {

@@ -7,16 +7,16 @@
             "args": [
                 "-fcolor-diagnostics",
                 "-fansi-escape-codes",
-                "-g",
-                "-ggdb3",
+                "-g", //better debug
+                "-ggdb3", //better debug
                 "${workspaceFolder}/source/*.cpp",
                 "-I",
                 "${workspaceFolder}/headers",
                 "-o",
-                "${fileDirname}/${fileBasenameNoExtension}.o",
+                "${workspaceFolder}/output/Phonebook.exe",
                 "-std=c++20",
 
-                // "-O3"
+                // "-O3" //fast program
             ],
             "options": {
                 "cwd": "${fileDirname}"

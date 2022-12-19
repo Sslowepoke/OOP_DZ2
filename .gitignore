@@ -6,3 +6,4 @@ tst_big.csv
 /.vscode/*/
 *.dSYM
 .DS_Store
+/output

@@ -2,28 +2,12 @@
 #include <queue>
 using std::queue;
 
-
-void Trie::insert (const std::string& name, Contact* contact) {
-    Node* curr = root;
-    for(auto& ch : name) {
-        if(Node* tmp = curr->children[charToIndex(ch)]) {
-            curr = tmp;
-        }
-        else {
-            //makes a new node
-            tmp = new Node();
-            curr = tmp;
-        }
-    }
-    curr->is_terminal = true;
-    curr->contact = contact;
-}
-
-Trie::Node* Trie::insertContact(Contact* contact) {
+void Trie::insertContact(Contact* contact) {
     Node* curr = root;
     std::string name = contact->getName();
-    for(char& ch : name) {
-        char index = charToIndex(ch);
+    for(int pos = 0; pos < name.length() && pos < max_depth; pos++) {
+        char ch = name[pos];
+        char index = Node::charToIndex(ch);
         if(curr->children[index]) {
             curr = curr->children[index];
         }
@@ -31,185 +15,93 @@ Trie::Node* Trie::insertContact(Contact* contact) {
             //makes a new node
             curr->children[index] = new Node();
             curr = curr->children[index];
+            if(pos == max_depth - 1) terminals.push_back(curr); // ??
         }
     }
-    if(curr->is_terminal) throw contact_already_exists();
-    curr->is_terminal = true;
-    curr->contact = contact;
-    terminals.push_back(curr);
-    return curr;
+    curr->insertContact(contact);
 }
 
 Trie::Node* Trie::getNode (const std::string& name) {
     Node* current = root;
-    for(auto& ch : name) {    
-        char index = charToIndex(ch);
+    int depth = 0;
+    for(auto& ch : name) {   
+        if(depth == max_depth) return current; 
+        depth++;
+        char index = Node::charToIndex(ch);
         if(current->children[index] == nullptr) return nullptr; 
         current = current->children[index];
     }
     return current;
-}   
-
-Trie::Node* Trie::search (const std::string& name) {
-    Node* tmp = getNode(name);
-    if(tmp == nullptr) throw node_nonexistant();
-    if(!tmp->is_terminal) throw node_not_terminal();
-    return tmp;
-}
-
-void Trie::printFrom(Node* start, std::ostream os) {
-    os << start;
-}
-
-std::ostream& operator<<(std::ostream& os, Trie tree) {
-    return os << tree.root; 
 }
 
 void Trie::deleteNode(Node* to_delete) {
-    if(!to_delete->is_terminal) return; //cant delete a non-terminal node
-    if(to_delete->hasChildren()) {
-        to_delete->is_terminal = false;
-        delete(to_delete->contact);
-        to_delete->contact = nullptr;
-        return;
-    }
+    if(!to_delete->isTerminal()) throw node_not_terminal();
+    if(to_delete->hasChildren()) return;
+    std::string name = to_delete->getPrefix();
     std::stack<Node*> stack = getPath(to_delete);
-    Node* current;
-    Node* previous;
+    Node *current, *previous;
     int depth = stack.size();
     while(1) {
         current = stack.top();
         stack.pop();
         previous = stack.top();
-        if(current->hasChildren() || current->is_terminal) break;
+        if(current->hasChildren() || current->isTerminal()) break;
         delete(current);
-         //sets the pointer to deleted node to null
-        previous->children[to_delete->contact->getName()[depth]] = nullptr;
+        //sets the pointer to deleted node to null
+        char index = Node::charToIndex(name[depth]);
+        previous->children[index] = nullptr;
     }
-    to_delete->is_terminal = false;
-    delete(to_delete->contact);
-    to_delete->contact = nullptr;
+    delete to_delete;
 }
 
 std::stack<Trie::Node*> Trie::getPath(Node* node) {
     Node* current = root;
     std::stack<Node*> stack;
-    for(char& ch : node->contact->getName()) {
+    std::string prefix = node->getPrefix();
+    for(char& ch : prefix) {
         // if(current->children[ch] == nullptr) //error
-        current = current->children[charToIndex(ch)];
+        current = current->children[Node::charToIndex(ch)];
         stack.push(current);
     }
     return stack;
 }
 
 Trie::~Trie() {
-    // deleteSubtrie(root);
+    empty();
+}
+
+bool Trie::empty() {
+    return !root->hasChildren();
+}
+
+void Trie::clear() {
+    if(terminals.empty()) return;
     for(auto node : terminals) {
         deleteNode(node);
     }
 }
 
-// recursive
-// void Trie::deleteSubtrie(Node* root) {
-//     if(!root->hasChildren()) {
-//         delete root;
-//         return;
-//     }
-//     for(char c = 0; c < alphabet_size; c++) {
-//         if(root->children[c]) 
-//             deleteSubtrie(root->children[c]);
-//     }
-// }
-
-//levelOrder
-void Trie::deleteSubtrie(Node* root) {
-    if(!root->hasChildren()) {
-        delete root;
-        return;
-    }
-    if(root == nullptr) {
-        return;
-    }
-    queue<Node*> queue;
-    Node* curr;
-    queue.push(root);
-    while(queue.size() > 0) {
-        curr = queue.front();
-        queue.pop();
-
-        if(curr == nullptr) {
-        }
-        else {
-            for(char c = 0; c < alphabet_size; c++) {
-                if(curr->children[c]) {
-                    queue.push(curr->children[c]);
-                }
-            }
-                delete curr;
-        }
-    }
-}
-
-bool Trie::isEmpty() {
-    return !root->hasChildren();
-}
-
-void Trie::empty() {
-    for(char c = 0; c < alphabet_size; c++) {
-        if(root->children[c])
-            deleteSubtrie(root->children[c]);
-    }
-}
-
-std::ostream& Trie::printPrefix(std::ostream& os, std::string& prefix) {
-    return os << getNode(prefix);
-}
-
-void Trie::selectNode(std::string& name) {
-    selected_node = search(name);
-    std::cout << "- Contact " << (*selected_node->contact) << "is now selected." << std::endl;
-}
-
-void Trie::deleteSelected() {
-    if(!selected_node) throw no_node_selected();
-    deleteNode(selected_node);
-}
-
-void Trie::changeSelectedNumber( std::string& number) {
-    if(!selected_node) throw no_node_selected();
-    selected_node->contact->changeNumber(number);
-}
-
-void Trie::changeSelectedName(std::string& name) {
-    if(!selected_node) throw no_node_selected();
-    Contact* contact = new Contact(*selected_node->contact);
-    contact->changeName(name);
-    Node* inserted_node = insertContact(contact);
-    deleteNode(selected_node);
-    selected_node = inserted_node;
-}
-
-void Trie::printSelected() {
-    if(!selected_node) throw no_node_selected();
-    std::cout << (*selected_node);
-}
-
 Contact* Trie::getContact(const std::string& name) {
     Node* node = getNode(name);
-    return node->contact;
+    return node->getContact(name);
 }
 
-Contact* Trie::getSelectedContact() {
-    if(!selected_node) throw no_node_selected();
-    return selected_node->contact;
+void Trie::deleteContact(Contact* contact) {
+    Node* node = getNode(contact->getName());
+    if(node->hasChildren()) {
+        node->deleteContact(contact);
+    }
+    else {
+        deleteNode(node);
+    }
 }
 
 std::list<Contact*> Trie::startsWith(const std::string& prefix) {
     Node* node = getNode(prefix);
-    return terminalChildren(node);
+    return descendantContacts(node);
 }
 
-std::list<Contact*> Trie::terminalChildren(Node* root) {
+std::list<Contact*> Trie::descendantContacts(Node* root) {
     std::stack<Node*> s;
     std::list<Contact*> list;
     if(!root) return list;
@@ -218,7 +110,9 @@ std::list<Contact*> Trie::terminalChildren(Node* root) {
     while(s.size()) {
         curr = s.top();
         s.pop();
-        if(curr->is_terminal) list.push_back(curr->contact);
+        if(curr->isTerminal()) {
+            curr->addToList(&list);
+        }
         for(auto node : curr->children) {
             if(node) s.push(node);
         }
@@ -226,31 +120,25 @@ std::list<Contact*> Trie::terminalChildren(Node* root) {
     return list;
 }
 
+Contact* Trie::changeContactName(Contact* contact, const std::string& new_name) {
+    Contact* new_contact = new Contact(*contact);
+    new_contact->changeName(new_name);
+    insertContact(new_contact);
+    deleteContact(contact);
+    return new_contact;
+}
 
 //node----------------------------------------------------------------------------------
 
-std::ostream& operator<<(std::ostream& os, const Trie::Node& node){
-    os << "-- " << (*node.contact) << std::endl;
-    return os;
-}
-
-std::ostream& operator<<(std::ostream& os, Trie::Node* start) {
-    if(start == nullptr) return os;
-    if(start->is_terminal) os << (*start);
-    for(char c = 0; c < Trie::alphabet_size; c++) {
-        if(start->children[c]!=nullptr) os << start->children[c];
-    }
-    return os;
-}
-
 bool Trie::Node::hasChildren() const{
+    if(children.empty()) return false;
     for(Node* ptr : children) {
         if(ptr != nullptr) return true;
     }
     return false;
 }
 
-char Trie::charToIndex(char c) const{
+char Trie::Node::charToIndex(char c){
     if(c >= 'a' && c <= 'z')
         return c - 'a';
     else if(c >= 'A' && c <= 'Z')
@@ -264,7 +152,71 @@ char Trie::charToIndex(char c) const{
     else 
         return 29;// sve ostale nepodrzane karaktere tretiram kao jedan (i guess dovoljno dobro)
 }
+
+void Trie::Node::insertContact(Contact* contact) {
+    if(contacts.empty()) {
+        contacts.push_front(contact);
+        return;
+    }
+    for (auto it = contacts.begin(); it !=contacts.end(); it++) {
+        if(std::strcmp(contact->getName().c_str(), (*it)->getName().c_str()) < 0) {
+            contacts.insert(it, contact);
+            return;
+        }
+    }
+    contacts.push_back(contact);
+}
+
+void Trie::Node::addToList(std::list<Contact*> *list) {
+    for(Contact* contact : contacts) {
+        list->push_back(contact);
+    }
+}
+
+void Trie::Node::deleteContact(Contact* contact) {
+    contacts.remove(contact);
+    delete contact;
+}
+
+std::string Trie::Node::getPrefix() {
+    std::string name = contacts.front()->getName();
+    if(name.size() > max_depth) 
+        return name.substr(0, max_depth);
+    else
+        return name;
+}
+
 Trie::Node::~Node() {
-    if(contact) delete contact;
-    contact = nullptr;
+    if(contacts.empty()) return;
+    for(auto contact : contacts) {
+        delete contact;
+    }
+}
+
+Contact* Trie::Node::getContact(const std::string& name) {
+    std::vector<Contact*> vector;
+    for(auto contact : contacts) {
+        if(contact->getName() == name)
+            vector.push_back(contact);
+    }
+    if(vector.size() > 1) {
+        std::cout << "- these contacts match given name: " << std::endl;
+        int count = 1;
+        for(auto contact : vector) {
+            std::cout << "- " << count << ". " << *contact << std::endl;
+            count++;
+        }
+        std::cout << "- please type in the index of the desired contact: ";
+        int index;
+        std::cin >> index;
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        return vector[index - 1];
+    }
+    else if(vector.size() == 0) {
+        throw contact_nonexistant();   
+    }
+    else {
+        return vector[0];
+    }
 }

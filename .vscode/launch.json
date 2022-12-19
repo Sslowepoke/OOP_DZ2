@@ -5,7 +5,7 @@
             "name": "(lldb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${fileDirname}/${fileBasenameNoExtension}.o",
+            "program": "${workspaceFolder}/output/Phonebook.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

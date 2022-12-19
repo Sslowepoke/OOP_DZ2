@@ -4,17 +4,18 @@ std::ostream& operator<<(std::ostream& os, const Contact& contact) {
     return os << contact.name << " " << contact.number;
 }
 
-std::string Contact::getName() {
+std::string Contact::getName() const {
     return this->name;
 }
 
-void Contact::changeNumber(std::string& new_number) {
+void Contact::changeNumber(const std::string& new_number) {
+    Number* temp = Number::makeNumber(new_number);
     delete number;
-    number = Number::makeNumber(new_number);
+    number = temp;
     std::cout << "- Number changed to: " << number << std::endl;
 }
 
-void Contact::changeName(std::string& new_name) {
+void Contact::changeName(const std::string& new_name) {
     name = new_name;
     std::cout << "- Name changed to " << name << std::endl;
 }

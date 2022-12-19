@@ -12,9 +12,9 @@ public:
     ~Contact();
     
     friend std::ostream& operator<<(std::ostream& os, const Contact& contact);
-    std::string getName();
-    void changeNumber(std::string& new_number);
-    void changeName(std::string& new_name);
+    std::string getName() const;
+    void changeNumber(const std::string& new_number);
+    void changeName(const std::string& new_name);
 
 private:
     Number* number;

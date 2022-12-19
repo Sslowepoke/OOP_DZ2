@@ -2,7 +2,6 @@
 
 #include <string>
 using std::string;
-
 #include <list>
 using std::list;
 
@@ -24,27 +23,18 @@ private:
     Phonebook();
     Trie tree;
     CallHistory call_history;
-
-    static constexpr int call_history_length = 10;
-
-
+    Contact* selected_contact;
 
     //empties phonebook (deletes all data)
     void empty();
     //makes a new contact and adds it to the trie
     void addContact(std::string&name, const std::string& number);
-    //and prints out new contact added
-    void addContactPrint(std::string& name, const std::string& nubmer);
     //prints a welcome message
     void welcomeMessage();
     //changes selected contact's number
     void changeSelectedNumber();
     //changes selected contact's name
     void changeSelectedName();
-    //clears cin buffer
-    void flushCin();
-    //adds the contact to call_history
-    void addToCallHistory(Contact* contact);
 
     //commmands
     void terminalNew();
