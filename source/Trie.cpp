@@ -51,7 +51,17 @@ void Trie::deleteNode(Node* to_delete) {
         char index = Node::charToIndex(name[depth]);
         previous->children[index] = nullptr;
     }
+    // removeFromTerminals(to_delete);
     delete to_delete;
+
+}
+
+void Trie::removeFromTerminals(const Node* node) {
+    for(auto it = terminals.begin(); it <= terminals.end(); it++) {
+        if((*it) == node) {
+            terminals.erase(it);
+        }
+    }
 }
 
 std::stack<Trie::Node*> Trie::getPath(Node* node) {
@@ -67,7 +77,7 @@ std::stack<Trie::Node*> Trie::getPath(Node* node) {
 }
 
 Trie::~Trie() {
-    empty();
+    clear();
 }
 
 bool Trie::empty() {
@@ -79,6 +89,7 @@ void Trie::clear() {
     for(auto node : terminals) {
         deleteNode(node);
     }
+    terminals.clear();
 }
 
 Contact* Trie::getContact(const std::string& name) {
@@ -88,20 +99,21 @@ Contact* Trie::getContact(const std::string& name) {
 
 void Trie::deleteContact(Contact* contact) {
     Node* node = getNode(contact->getName());
-    if(node->hasChildren()) {
+    if(node->hasChildren() || node->contactCount() > 1) {
         node->deleteContact(contact);
     }
     else {
+        removeFromTerminals(node);
         deleteNode(node);
     }
 }
 
 std::list<Contact*> Trie::startsWith(const std::string& prefix) {
     Node* node = getNode(prefix);
-    return descendantContacts(node);
+    return descendantContacts(node, prefix);
 }
 
-std::list<Contact*> Trie::descendantContacts(Node* root) {
+std::list<Contact*> Trie::descendantContacts(Node* root, const std::string& prefix) {
     std::stack<Node*> s;
     std::list<Contact*> list;
     if(!root) return list;
@@ -111,7 +123,7 @@ std::list<Contact*> Trie::descendantContacts(Node* root) {
         curr = s.top();
         s.pop();
         if(curr->isTerminal()) {
-            curr->addToList(&list);
+            curr->addToList(&list, prefix);
         }
         for(auto node : curr->children) {
             if(node) s.push(node);
@@ -120,12 +132,50 @@ std::list<Contact*> Trie::descendantContacts(Node* root) {
     return list;
 }
 
-Contact* Trie::changeContactName(Contact* contact, const std::string& new_name) {
-    Contact* new_contact = new Contact(*contact);
-    new_contact->changeName(new_name);
-    insertContact(new_contact);
-    deleteContact(contact);
-    return new_contact;
+void Trie::changeContactName(Contact* contact, const std::string& new_name) {
+    // Contact* new_contact = new Contact(*contact);
+    // new_contact->changeName(new_name);
+    // insertContact(new_contact);
+    // deleteContact(contact);
+    // return new_contact;
+    unlinkContact(contact);
+    contact->changeName(new_name);
+    insertContact(contact);
+    
+}
+
+void Trie::unlinkContact(Contact* contact) {
+    Node* node = getNode(contact->getName());
+    Contact* old_contact = node->unlinkContact(contact);
+    deleteContact(old_contact);
+}
+
+Contact* Trie::Node::getContact(const std::string& name) {
+    std::vector<Contact*> vector;
+    for(auto contact : contacts) {
+        if(contact->getName() == name)
+            vector.push_back(contact);
+    }
+    if(vector.size() > 1) {
+        std::cout << "- these contacts match given name: " << std::endl;
+        int count = 1;
+        for(auto contact : vector) {
+            std::cout << "- " << count << ". " << *contact << std::endl;
+            count++;
+        }
+        std::cout << "- please type in the index of the desired contact: ";
+        int index;
+        std::cin >> index;
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        return vector[index - 1];
+    }
+    else if(vector.size() == 0) {
+        throw contact_nonexistant();   
+    }
+    else {
+        return vector[0];
+    }
 }
 
 //node----------------------------------------------------------------------------------
@@ -167,9 +217,11 @@ void Trie::Node::insertContact(Contact* contact) {
     contacts.push_back(contact);
 }
 
-void Trie::Node::addToList(std::list<Contact*> *list) {
+void Trie::Node::addToList(std::list<Contact*> *list, const std::string& prefix) {
     for(Contact* contact : contacts) {
-        list->push_back(contact);
+        if(contact->getName().find(prefix) != std::string::npos) {
+            list->push_back(contact);
+        }
     }
 }
 
@@ -193,30 +245,16 @@ Trie::Node::~Node() {
     }
 }
 
-Contact* Trie::Node::getContact(const std::string& name) {
-    std::vector<Contact*> vector;
-    for(auto contact : contacts) {
-        if(contact->getName() == name)
-            vector.push_back(contact);
-    }
-    if(vector.size() > 1) {
-        std::cout << "- these contacts match given name: " << std::endl;
-        int count = 1;
-        for(auto contact : vector) {
-            std::cout << "- " << count << ". " << *contact << std::endl;
-            count++;
+Contact* Trie::Node::unlinkContact(Contact* contact) {
+    for(auto it = contacts.begin(); it != contacts.end(); it++) {
+        if(*it == contact) {
+            *it = new Contact(*contact);
+            return *it;
         }
-        std::cout << "- please type in the index of the desired contact: ";
-        int index;
-        std::cin >> index;
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        return vector[index - 1];
     }
-    else if(vector.size() == 0) {
-        throw contact_nonexistant();   
-    }
-    else {
-        return vector[0];
-    }
+    throw contact_nonexistant();
+}
+
+int Trie::Node::contactCount() const{
+    return contacts.size();
 }

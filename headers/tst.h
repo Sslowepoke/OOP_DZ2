@@ -37,14 +37,14 @@ int tst() {
         std::stringstream input;
         std::streambuf *cinbuf = std::cin.rdbuf(); // save old buffer
         std::cin.rdbuf(input.rdbuf()); // redirect std::cin stringstream!
-    std::cout << "got to here" << std::endl;
 
         std::stringstream output;
         std::streambuf *coutbuf = std::cout.rdbuf(); // save old buffer
         std::cout.rdbuf(output.rdbuf()); // redirect std::cout stringstream!
 
         input << "SEARCH\n"
-                 "Baja\n";
+                 "Baja\n"
+                 "exit\n";
 
         PhoneBook& pb = PhoneBook::getInstance();
         const string path = "tst.csv";
@@ -98,7 +98,8 @@ int tst() {
         std::cout.rdbuf(output.rdbuf()); // redirect std::cout stringstream!
 
         input << "SELECT\n"
-                 "Bajaga\n";
+                 "Bajaga\n"
+                 "exit\n";
 
         PhoneBook& pb = PhoneBook::getInstance();
         const string path = "tst.csv";
@@ -154,7 +155,8 @@ int tst() {
         input << "SELECT\n"
                  "Bajaga\n"
                  "CALL\n"
-                 "CALL_HISTORY\n";
+                 "CALL_HISTORY\n"
+                 "exit\n";
 
         PhoneBook& pb = PhoneBook::getInstance();
         const string path = "tst.csv";
@@ -215,7 +217,8 @@ int tst() {
                  "Bajaga\n"
                  "EDIT\n"
                  "1\n"
-                 "Momcilo Bajagic\n";
+                 "Momcilo Bajagic\n"
+                 "exit\n";
 
         PhoneBook& pb = PhoneBook::getInstance();
         const string path = "tst.csv";

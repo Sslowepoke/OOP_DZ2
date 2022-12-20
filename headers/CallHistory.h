@@ -10,21 +10,26 @@ using std::list;
 
 class Call {
 public:
-    Call(Contact* contact) : contact(*contact), time(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())) {}
+    Call(Contact* contact);
     friend std::ostream& operator<<(std::ostream& os, const Call& call);
+    ~Call();
+    void deletedContact(Contact* contact);
 
 private:
-    Contact contact;
+    Contact* contact;
+    Number* number;
     std::time_t time;
 
 };
 
 class CallHistory {
 public:
-    CallHistory();
+    ~CallHistory();
     void call(Contact* contact);
     friend std::ostream& operator<<(std::ostream& os, const CallHistory& call_history);
+    void clear();
+    void deletedContact(Contact* contact);
 private:
     static constexpr int call_history_length = 10;
-    list<Call> call_list;
+    list<Call*> call_list;
 };

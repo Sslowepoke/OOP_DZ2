@@ -3,10 +3,11 @@
 
 
 int main() {   
-        Phonebook& p = Phonebook::getInstance();
+    Phonebook& p = Phonebook::getInstance();
 
-        p.loadPhonebook("tst.csv");
-        p.openTerminal();
+    p.loadPhonebook("tst.csv");
+    p.openTerminal();
+
 
     return 0;
 }

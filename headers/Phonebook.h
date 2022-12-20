@@ -13,8 +13,8 @@ class Phonebook {
 public:
     static Phonebook& getInstance();
     //official requirements
-    void openTerminal();
-    void loadPhonebook(const string& filepath);
+    void openTerminal(); //static
+    void loadPhonebook(const string& filepath); //static
 
     Phonebook(Phonebook const&) = delete;
     void operator=(Phonebook const&) = delete;
@@ -26,7 +26,7 @@ private:
     Contact* selected_contact;
 
     //empties phonebook (deletes all data)
-    void empty();
+    void clear();
     //makes a new contact and adds it to the trie
     void addContact(std::string&name, const std::string& number);
     //prints a welcome message

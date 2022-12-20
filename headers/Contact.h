@@ -13,6 +13,7 @@ public:
     
     friend std::ostream& operator<<(std::ostream& os, const Contact& contact);
     std::string getName() const;
+    Number* getNumber() const;
     void changeNumber(const std::string& new_number);
     void changeName(const std::string& new_name);
 

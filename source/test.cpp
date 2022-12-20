@@ -4,7 +4,7 @@
 using namespace std;
 
 // forward declare tested types
-// class Phonebook;
+class Phonebook;
 
 // int main(int argc, char const *argv[]) {
 //     using namespace std;

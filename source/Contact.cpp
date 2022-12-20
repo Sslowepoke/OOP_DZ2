@@ -8,6 +8,10 @@ std::string Contact::getName() const {
     return this->name;
 }
 
+Number* Contact::getNumber() const{
+    return number;
+}
+
 void Contact::changeNumber(const std::string& new_number) {
     Number* temp = Number::makeNumber(new_number);
     delete number;

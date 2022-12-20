@@ -28,13 +28,17 @@ private:
         //inserts a contact
         void insertContact(Contact* contact);
         //adds all contacs to the given list
-        void addToList(std::list<Contact*> *list);
+        void addToList(std::list<Contact*> *list, const std::string& prefix);
         //returns a contact with given name
         Contact* getContact(const std::string& name);
         //deletes the given contact
         void deleteContact(Contact* contact);
         //returns the prefix that leads to this node
         std::string getPrefix();
+        //replaces contact with it's copy
+        Contact* unlinkContact(Contact* contact);
+        //returns no of contacts
+        int contactCount() const;
 
         std::list<Contact*> contacts;
         std::vector<Node*> children;
@@ -60,13 +64,17 @@ public:
     void deleteContact(Contact* contact);
 
     //changes name of given contact
-    Contact* changeContactName(Contact* contact, const std::string& new_name);
+    void changeContactName(Contact* contact, const std::string& new_name);
     //returns a contact pointer to contact with given name
     Contact* getContact(const std::string& name);
     //returns a list of pointers to contacts whose names start with given string
     std::list<Contact*> startsWith(const std::string& prefix);
     //returns a list of contacts who are descendants of given node
-    std::list<Contact*> descendantContacts(Node* root);
+    std::list<Contact*> descendantContacts(Node* root, const std::string& prefix);
+    //unlinks contact from tree
+    void unlinkContact(Contact* contact);
+    //removes given terminal node from vector terminals
+    void removeFromTerminals(const Node* node);
 
 
 private:

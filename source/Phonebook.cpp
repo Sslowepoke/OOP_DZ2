@@ -17,7 +17,7 @@ Phonebook& Phonebook::getInstance(){
 }
 
 void Phonebook::loadPhonebook(const string& filepath) {
-    empty();
+    clear();
     ifstream file(filepath);
     std::string line;
     try {
@@ -45,7 +45,8 @@ void Phonebook::addContact(std::string&name, const std::string& number) {
     tree.insertContact(new Contact(name, number));
 }
 
-void Phonebook::empty() {
+void Phonebook::clear() {
+    call_history.clear();
     if(!tree.empty()){
         tree.clear();
     } 
@@ -113,6 +114,7 @@ void Phonebook::terminalSelect() {
 
 void Phonebook::terminalDelete() {
     if(!selected_contact) throw no_contact_selected();
+    call_history.deletedContact(selected_contact);
     tree.deleteContact(selected_contact);
     selected_contact = nullptr;
 }
@@ -146,7 +148,7 @@ void Phonebook::changeSelectedName() {
     string name;
     // flushCin();
     std::getline(std::cin, name, '\n');
-    selected_contact = tree.changeContactName(selected_contact, name);
+    tree.changeContactName(selected_contact, name);
 }
 
 void Phonebook::changeSelectedNumber() {
