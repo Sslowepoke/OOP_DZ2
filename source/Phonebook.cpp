@@ -93,15 +93,22 @@ void Phonebook::terminalNew() {
     std::cout << "- Added contact: " << name << " " << number << std::endl;
 }
 
+// void Phonebook::terminalSearch() {
+//     std::cout << "- Enter the contact name or first few letters: ";
+//     std::string prefix;
+//     std::getline(std::cin, prefix, '\n');
+//     std::list<Contact*> matches = tree.startsWith(prefix);
+//     std::cout << "- " << matches.size() << " contacts have been found: " << std::endl;
+//     for(auto contact : matches) {
+//         std::cout << "-- " << (*contact) << std::endl;
+//     }
+// }
+
 void Phonebook::terminalSearch() {
     std::cout << "- Enter the contact name or first few letters: ";
     std::string prefix;
     std::getline(std::cin, prefix, '\n');
-    std::list<Contact*> matches = tree.startsWith(prefix);
-    std::cout << "- " << matches.size() << " contacts have been found: " << std::endl;
-    for(auto contact : matches) {
-        std::cout << "-- " << (*contact) << std::endl;
-    }
+    tree.printPrefix(prefix);
 }
 
 void Phonebook::terminalSelect() {

@@ -178,6 +178,24 @@ Contact* Trie::Node::getContact(const std::string& name) {
     }
 }
 
+void Trie::printPrefix(const std::string& prefix) {
+    int cnt = 0;
+    std::stack<Node*> s;
+    Node* curr;
+    s.push(getNode(prefix));
+    while(s.size()) {
+        curr = s.top();
+        s.pop();
+        if(curr->isTerminal()) {
+            curr->print(cnt, prefix);
+        }
+        for(auto node : curr->children) {
+            if(node) s.push(node);
+        }
+    }
+    std::cout << "-- Found " << cnt << " matches" << std::endl;
+}
+
 //node----------------------------------------------------------------------------------
 
 bool Trie::Node::hasChildren() const{
@@ -220,7 +238,16 @@ void Trie::Node::insertContact(Contact* contact) {
 void Trie::Node::addToList(std::list<Contact*> *list, const std::string& prefix) {
     for(Contact* contact : contacts) {
         if(contact->getName().find(prefix) != std::string::npos) {
-            list->push_back(contact);
+            list->push_front(contact);
+        }
+    }
+}
+
+void Trie::Node::print(int& cnt, const std::string& prefix) {
+    for(Contact* contact : contacts) {
+        if(contact->getName().find(prefix) != std::string::npos) {
+            std::cout << "-- " << *contact << std::endl;
+            cnt++;
         }
     }
 }

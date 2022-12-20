@@ -29,6 +29,8 @@ private:
         void insertContact(Contact* contact);
         //adds all contacs to the given list
         void addToList(std::list<Contact*> *list, const std::string& prefix);
+        //prints all contacts
+        void print(int& cnt, const std::string& prefix);
         //returns a contact with given name
         Contact* getContact(const std::string& name);
         //deletes the given contact
@@ -59,7 +61,7 @@ public:
     //empties tree
     void clear();
     //prints all terminal nodes with names that begin with given prefix
-    std::ostream& printPrefix(std::ostream& os, std::string& prefix);
+    void printPrefix(const std::string& prefix);
     //deletes the given contact
     void deleteContact(Contact* contact);
 
