@@ -9,13 +9,14 @@ using std::vector;
 
 #include "Contact.h"
 #include "PhonebookException.h"
+#include "List.h"
 class Trie {
 //node-------------------------------------------------------------------------------
 private:
     class Node {
     public:
 
-        Node() : children(alphabet_size), contacts(0){}
+        Node() : contacts(0){}
         ~Node();
 
         //translates ascii char to its counterpart index in vector children
@@ -41,9 +42,14 @@ private:
         Contact* unlinkContact(Contact* contact);
         //returns no of contacts
         int contactCount() const;
+        //deletes all contacts
+        void clear();
 
         std::list<Contact*> contacts;
-        std::vector<Node*> children;
+        List<Node*> children;
+
+    private:
+        
     };
 public:
     Trie() : root(new Node()) {}
@@ -85,6 +91,6 @@ private:
     //returns a pointer to node with given name if it exists
     Node* getNode(const std::string& name);
 
-    static constexpr int max_depth = 10;
+    static constexpr int max_depth = 12;
 
 };
