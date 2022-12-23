@@ -7,10 +7,10 @@ class Number {
 public:
     virtual ~Number() {}
     static Number* makeNumber(const std::string& number_string);
-    virtual Number* makeCopy() = 0;
+    virtual Number* makeCopy() const = 0;
     static constexpr int max_number_length  = 12;
     virtual std::ostream& print(std::ostream& os) const = 0;
-    friend std::ostream& operator<<(std::ostream& os, Number* number);
+    friend std::ostream& operator<<(std::ostream& os, const Number* number);
 private:
 
 };
@@ -23,7 +23,7 @@ public:
     // prefix(mobile_number.prefix), call_number(mobile_number.call_number), number(mobile_number.number) {}
     ~MobileNumber() override {}
     std::ostream& print(std::ostream& os) const override;
-    Number* makeCopy() override;
+    Number* makeCopy() const override;
 
 private:
     std::string prefix;
@@ -38,7 +38,7 @@ public:
     // HomeNumber(const HomeNumber& home_number);
     ~HomeNumber() override {}
     std::ostream& print(std::ostream& os) const override;
-    Number* makeCopy() override;
+    Number* makeCopy() const override;
 
 private:
     std::string prefix;

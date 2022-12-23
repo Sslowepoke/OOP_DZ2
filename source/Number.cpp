@@ -37,7 +37,7 @@ Number* Number::makeNumber(const std::string& number_string) {
 }
 
 
-std::ostream& operator<<(std::ostream& os, Number* number) {
+std::ostream& operator<<(std::ostream& os, const Number* number) {
     return number->print(os);
 }
 
@@ -50,7 +50,7 @@ std::ostream& MobileNumber::print(std::ostream& os) const{
         return os << prefix << " " << call_number << " " << number << " ";
 }
 
-Number* MobileNumber::makeCopy() {
+Number* MobileNumber::makeCopy() const {
     return new MobileNumber(*this);
 }
 
@@ -67,7 +67,7 @@ std::ostream& HomeNumber::print(std::ostream& os) const{
         return os << prefix << " " << call_number << " " << number << " ";
 }
 
-Number* HomeNumber::makeCopy() {
+Number* HomeNumber::makeCopy() const {
     return new HomeNumber(*this);
 }
  

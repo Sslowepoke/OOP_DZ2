@@ -10,7 +10,7 @@ class PhonebookException : public std::exception {
 public:
     string whatstr;
     PhonebookException(const string& what) : whatstr(what) {}
-    const char* what() const _NOEXCEPT override {
+    const char* what() const noexcept override {
         return whatstr.c_str();
     }
 };

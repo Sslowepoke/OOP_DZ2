@@ -13,7 +13,6 @@ void Trie::insertContact(Contact* contact) {
         }
         else {
             //makes a new node
-            // curr->children[ch] = new Node();
             curr->children.insert(ch, new Node());
             curr = curr->children[ch];
             if(pos == max_depth - 1) terminals.push_back(curr); // ??
@@ -22,7 +21,7 @@ void Trie::insertContact(Contact* contact) {
     curr->insertContact(contact);
 }
 
-Trie::Node* Trie::getNode (const std::string& name) {
+Trie::Node* Trie::getNode (const std::string& name) const{
     Node* curr = root;
     int depth = 0;
     for(auto& ch : name) {   
@@ -45,8 +44,7 @@ void Trie::deleteNode(Node* to_delete) {
     }
     //======================================
     Node *current, *previous;
-    int depth = stack.size();
-    while(1) {
+    for(int depth = stack.size() - 1; depth > 0; depth--){
         current = stack.top();
         stack.pop();
         previous = stack.top();
@@ -55,8 +53,6 @@ void Trie::deleteNode(Node* to_delete) {
         //sets the pointer to deleted node to null
         previous->children.remove(name[depth]);
     }
-    // removeFromTerminals(to_delete);
-    // delete to_delete;
 }
 
 void Trie::removeFromTerminals(const Node* node) {
@@ -67,7 +63,7 @@ void Trie::removeFromTerminals(const Node* node) {
     }
 }
 
-std::stack<Trie::Node*> Trie::getPath(Node* node) {
+std::stack<Trie::Node*> Trie::getPath(const Node* node) const {
     Node* current = root;
     std::stack<Node*> stack;
     std::string prefix = node->getPrefix();
@@ -83,7 +79,7 @@ Trie::~Trie() {
     clear();
 }
 
-bool Trie::empty() {
+bool Trie::empty() const {
     return !root->hasChildren();
 }
 
@@ -134,18 +130,12 @@ std::list<Contact*> Trie::descendantContacts(Node* root, const std::string& pref
 }
 
 void Trie::changeContactName(Contact* contact, const std::string& new_name) {
-    // Contact* new_contact = new Contact(*contact);
-    // new_contact->changeName(new_name);
-    // insertContact(new_contact);
-    // deleteContact(contact);
-    // return new_contact;
     unlinkContact(contact);
     contact->changeName(new_name);
-    insertContact(contact);
-    
+    insertContact(contact);   
 }
 
-void Trie::unlinkContact(Contact* contact) {
+void Trie::unlinkContact(const Contact* contact) {
     Node* node = getNode(contact->getName());
     Contact* old_contact = node->unlinkContact(contact);
     deleteContact(old_contact);
@@ -179,7 +169,7 @@ Contact* Trie::Node::getContact(const std::string& name) {
     }
 }
 
-void Trie::printPrefix(const std::string& prefix) {
+void Trie::printPrefix(const std::string& prefix) const{
     int cnt = 0;
     std::stack<Node*> s;
     Node* curr;
@@ -201,21 +191,6 @@ bool Trie::Node::hasChildren() const{
     return !children.empty();
 }
 
-char Trie::Node::charToIndex(char c){
-    if(c >= 'a' && c <= 'z')
-        return c - 'a';
-    else if(c >= 'A' && c <= 'Z')
-        return c - 'A';
-    else if(c == ' ')
-        return 26;
-    else if(c == '-')
-        return 27;
-    else if(c == '.')
-        return 28;
-    else 
-        return 29;// sve ostale nepodrzane karaktere tretiram kao jedan (i guess dovoljno dobro)
-}
-
 void Trie::Node::insertContact(Contact* contact) {
     if(contacts.empty()) {
         contacts.push_back(contact);
@@ -230,7 +205,7 @@ void Trie::Node::insertContact(Contact* contact) {
     contacts.push_back(contact);
 }
 
-void Trie::Node::addToList(std::list<Contact*> *list, const std::string& prefix) {
+void Trie::Node::addToList(std::list<Contact*> *list, const std::string& prefix) const{
     for(Contact* contact : contacts) {
         if(contact->getName().find(prefix) != std::string::npos) {
             list->push_front(contact);
@@ -238,7 +213,7 @@ void Trie::Node::addToList(std::list<Contact*> *list, const std::string& prefix)
     }
 }
 
-void Trie::Node::print(int& cnt, const std::string& prefix) {
+void Trie::Node::print(int& cnt, const std::string& prefix) const {
     for(Contact* contact : contacts) {
         if(contact->getName().find(prefix) != std::string::npos) {
             std::cout << "-- " << *contact << std::endl;
@@ -250,9 +225,10 @@ void Trie::Node::print(int& cnt, const std::string& prefix) {
 void Trie::Node::deleteContact(Contact* contact) {
     contacts.remove(contact);
     delete contact;
+    contact = nullptr;
 }
 
-std::string Trie::Node::getPrefix() {
+std::string Trie::Node::getPrefix() const {
     std::string name = contacts.front()->getName();
     if(name.size() > max_depth) 
         return name.substr(0, max_depth);
@@ -267,7 +243,7 @@ Trie::Node::~Node() {
     }
 }
 
-Contact* Trie::Node::unlinkContact(Contact* contact) {
+Contact* Trie::Node::unlinkContact(const Contact* contact) {
     for(auto it = contacts.begin(); it != contacts.end(); it++) {
         if(*it == contact) {
             *it = new Contact(*contact);

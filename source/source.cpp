@@ -5,7 +5,7 @@
 int main() {   
     Phonebook& p = Phonebook::getInstance();
 
-    p.loadPhonebook("tst_big.csv");
+    p.loadPhonebook("tst_custom.csv");
     p.openTerminal();
 
 

@@ -41,7 +41,7 @@ void Phonebook::loadPhonebook(const string& filepath) {
     }
 }
 
-void Phonebook::addContact(std::string&name, const std::string& number) {
+void Phonebook::addContact(const std::string&name, const std::string& number) {
     tree.insertContact(new Contact(name, number));
 }
 
@@ -74,7 +74,7 @@ void Phonebook::openTerminal() {
     }
 }
 
-void Phonebook::welcomeMessage() {
+void Phonebook::welcomeMessage() const {
     std::cout << "--------------------------" << std::endl
         << "Welcome to your phonebook!" << std::endl 
         << "--------------------------" << std::endl;
@@ -83,11 +83,9 @@ void Phonebook::welcomeMessage() {
 void Phonebook::terminalNew() {
     std::cout << "- Enter the contact name: ";
     string name;
-    // flushCin();
     std::getline(std::cin, name, '\n');
     std::cout << "- Enter the contact number: ";
     string number;
-    // flushCin();
     std::getline(std::cin, number, '\n');    
     addContact(name, number);
     std::cout << "- Added contact: " << name << " " << number << std::endl;
@@ -104,7 +102,7 @@ void Phonebook::terminalNew() {
 //     }
 // }
 
-void Phonebook::terminalSearch() {
+void Phonebook::terminalSearch() const {
     std::cout << "- Enter the contact name or first few letters: ";
     std::string prefix;
     std::getline(std::cin, prefix, '\n');
@@ -114,7 +112,6 @@ void Phonebook::terminalSearch() {
 void Phonebook::terminalSelect() {
     std::cout << "- Enter the contact name: ";
     std::string name;
-    // flushCin();
     std::getline(std::cin, name, '\n');
     selected_contact = tree.getContact(name);
 }
@@ -153,7 +150,6 @@ void Phonebook::terminalEdit() {
 void Phonebook::changeSelectedName() {
     std::cout << "- Enter the new name ";
     string name;
-    // flushCin();
     std::getline(std::cin, name, '\n');
     tree.changeContactName(selected_contact, name);
 }
@@ -165,7 +161,7 @@ void Phonebook::changeSelectedNumber() {
     selected_contact->changeNumber(number);
 }
 
-void Phonebook::terminalHelp() {
+void Phonebook::terminalHelp() const{
     std::cout << "List of commands: " << std::endl
         << "- NEW - adds a new contact" << std::endl
         << "- SEARCH - shows all contacts beginning with given prefix" << std::endl
@@ -182,6 +178,6 @@ void Phonebook::terminalCall() {
     call_history.call(selected_contact);
 }
 
-void Phonebook::terminalCallHistory() {
+void Phonebook::terminalCallHistory() const{
     std::cout << call_history;
 }

@@ -13,7 +13,24 @@ private:
     };
 
     list<Node> nodes;
+
+    static char charToIndex(char c){
+        if(c >= 'a' && c <= 'z')
+            return c - 'a';
+        else if(c >= 'A' && c <= 'Z')
+            return c - 'A';
+        else if(c == ' ')
+            return 26;
+        else if(c == '-')
+            return 27;
+        else if(c == '.')
+            return 28;
+        else 
+            return 29;// sve ostale nepodrzane karaktere tretiram kao jedan (i guess dovoljno dobro)
+    }
+
 public:
+
     T& operator[](const char key){
         char index = charToIndex(key);
         for(auto& temp: nodes) {
@@ -23,16 +40,6 @@ public:
         }
         throw std::out_of_range("List index out of range");
     }
-
-    // T& insert(const char key) {
-    //     char index = charToIndex(key);
-    //     for(auto temp : nodes)  {
-    //         if(temp.key == index){
-    //             return temp.value;
-    //         }
-    //     }
-    //     return insert(key).value;
-    // }
 
     void insert(const char key, const T& value) {
         insert(key).value = value;
@@ -47,21 +54,6 @@ public:
         }
         return nodes.emplace_back(key);
     }
-
-    static char charToIndex(char c){
-    if(c >= 'a' && c <= 'z')
-        return c - 'a';
-    else if(c >= 'A' && c <= 'Z')
-        return c - 'A';
-    else if(c == ' ')
-        return 26;
-    else if(c == '-')
-        return 27;
-    else if(c == '.')
-        return 28;
-    else 
-        return 29;// sve ostale nepodrzane karaktere tretiram kao jedan (i guess dovoljno dobro)
-}
 
     void remove(const char key) {
         char index = charToIndex(key);
@@ -94,9 +86,4 @@ public:
     bool empty() const{
         return nodes.empty();
     }
-
-
-
-
-
 };
